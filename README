@@ -2,11 +2,13 @@ NAME
     Unicode::UTF8 - Encoding and decoding of UTF-8 encoding form
 
 SYNOPSIS
-        use Unicode::UTF8 qw[decode_utf8 encode_utf8];
+        use Unicode::UTF8 qw[decode_utf8 encode_utf8 read_utf8];
     
         use warnings FATAL => 'utf8'; # fatalize encoding glitches
         $string = decode_utf8($octets);
         $octets = encode_utf8($string);
+    
+        $count = read_utf8($fh, $buf, $length);
 
 DESCRIPTION
     This module provides functions to encode and decode UTF-8 encoding form
@@ -17,14 +19,13 @@ FUNCTIONS
         $string = decode_utf8($octets);
         $string = decode_utf8($octets, $fallback);
 
-    Returns an decoded representation of $octets in UTF-8 encoding as a
+    Returns a decoded representation of $octets in UTF-8 encoding as a
     character string.
 
     $fallback is an optional "CODE" reference which provides a
     error-handling mechanism, allowing customization of error handling. The
     default error-handling mechanism is to replace any ill-formed UTF-8
-    sequences or encoded code points which can't be interchanged with
-    REPLACEMENT CHARACTER (U+FFFD).
+    sequences with REPLACEMENT CHARACTER (U+FFFD).
 
         $string = $fallback->($octets, $is_usv, $position);
 
@@ -34,7 +35,7 @@ FUNCTIONS
     which can't be interchanged. $is_usv is a boolean indicating whether or
     not $octets represent a encoded Unicode scalar value. $position is a
     unsigned integer containing the zero based octet position at which the
-    error occurred within the octets provided to "decode_utf8()". $fallback
+    error occurred within the octets provided to decode_utf8(). $fallback
     must return a character string consisting of zero or more Unicode scalar
     values. Unicode scalar values consist of code points in the range
     U+0000..U+D7FF and U+E000..U+10FFFF.
@@ -60,15 +61,65 @@ FUNCTIONS
     $is_usv is a boolean indicating whether or not $codepoint is a Unicode
     scalar value. $position is a unsigned integer containing the zero based
     character position at which the error occurred within the string
-    provided to "encode_utf8()". $fallback must return a character string
+    provided to encode_utf8(). $fallback must return a character string
     consisting of zero or more Unicode scalar values.Unicode scalar values
     consist of code points in the range U+0000..U+D7FF and U+E000..U+10FFFF.
+
+  read_utf8
+        $count = read_utf8($fh, $buf, $length);
+        $count = read_utf8($fh, $buf, $length, $offset);
+
+    Reads up to $length UTF-8 encoded characters (code points) from the file
+    handle $fh, decoding and validating them in place, and stores the result
+    in $buf. Returns the number of characters actually read, 0 at end of
+    file, or "undef" on a read error (with $! set).
+
+    Because "read_utf8" reads and validates the octets directly, there is no
+    need to apply a PerlIO encoding layer (such as :encoding(UTF-8) or
+    ":utf8") to $fh. The handle should be a plain byte handle; the bytes are
+    validated and decoded by "read_utf8" itself.
+
+    If $offset is specified, the read data is written into $buf starting at
+    that character offset, preserving the existing content before it. A
+    negative $offset counts back from the end of $buf. If the offset is past
+    the end of the string, $buf is zero-filled up to the offset first.
+
+    Ill-formed and truncated input is not fatal: each maximal ill-formed
+    subpart is replaced with the Unicode replacement character U+FFFD and a
+    warning is emitted in the "utf8" warnings category. The returned count
+    includes the substituted code points.
+
+    Tied file handles are not supported.
+
+    Since version 0.71.
+
+  slurp_utf8
+        $string = slurp_utf8($filename);
+
+    Reads the entire file named $filename and returns its contents decoded
+    from UTF-8 as a character string. The file is read using unbuffered
+    (":unix") IO, and the octets are validated and decoded directly.
+
+    There is no upper bound on the amount read; the whole file is loaded
+    into memory. When handling untrusted or potentially large files, check
+    the size first (for example with "-s $filename") before calling
+    "slurp_utf8".
+
+    Ill-formed and truncated input is not fatal: each maximal ill-formed
+    subpart is replaced with the Unicode replacement character U+FFFD and a
+    warning is emitted in the "utf8" warnings category.
+
+    Throws an exception if the file cannot be opened or read.
+
+    Since version 0.73.
 
   valid_utf8
         $boolean = valid_utf8($octets);
 
     Returns a boolean indicating whether or not the given $octets consist of
     well-formed UTF-8 sequences.
+
+    Since version 0.60.
 
 EXPORTS
     None by default. All functions can be exported using the ":all" tag or
@@ -86,13 +137,6 @@ DIAGNOSTICS
         contains a hexadecimal representation of the maximal subpart of the
         ill-formed subsequence.
 
-    Can't interchange noncharacter code point U+%X in position %u
-        (W utf8, nonchar) Noncharacters are code points that are permanently
-        reserved in the Unicode Standard for internal use. They are
-        forbidden for use in open interchange of Unicode text data.
-        Noncharacters consist of the values U+nFFFE and U+nFFFF (where n is
-        from 0 to 10^16) and the values U+FDD0..U+FDEF.
-
     Can't represent surrogate code point U+%X in position %u
         (W utf8, surrogate) Surrogate code points are designated only for
         surrogate code units in the UTF-16 character encoding form.
@@ -106,17 +150,15 @@ DIAGNOSTICS
         (F) Encountered an ill-formed octet sequence in Perl's internal
         representation of wide characters.
 
-    The sub-categories: "nonchar", "surrogate" and "non_unicode" is only
-    available on Perl 5.14 or greater. See perllexwarn for available
-    categories and hierarchies.
+    The sub-categories: "surrogate" and "non_unicode" is only available on
+    Perl 5.14 or greater. See perllexwarn for available categories and
+    hierarchies.
 
 COMPARISON
     Here is a summary of features for comparison with Encode's UTF-8
     implementation:
 
     *   Simple API which makes use of Perl's standard warning categories.
-
-    *   Recognizes all noncharacters regardless of Perl version
 
     *   Implements Unicode's recommended practice for using U+FFFD.
 
@@ -137,15 +179,14 @@ CONFORMANCE
 
 SEE ALSO
     Encode
+    Encode::Simple
     <http://www.unicode.org/>
 
 SUPPORT
   BUGS
-    Please report any bugs by email to "bug-unicode-utf8 at rt.cpan.org", or
-    through the web interface at
-    <http://rt.cpan.org/Public/Dist/Display.html?Name=Unicode-UTF8>. You
-    will be automatically notified of any progress on the request by the
-    system.
+    Please report any bugs through the web interface at
+    <https://github.com/chansen/p5-unicode-utf8/issues>. You will be
+    automatically notified of any progress on the request by the system.
 
   SOURCE CODE
     This is open source software. The code repository is available for
@@ -159,7 +200,7 @@ AUTHOR
     Christian Hansen "chansen@cpan.org"
 
 COPYRIGHT
-    Copyright 2011-2017 by Christian Hansen.
+    Copyright 2011-2026 by Christian Hansen.
 
     This is free software; you can redistribute it and/or modify it under
     the same terms as the Perl 5 programming language system itself.

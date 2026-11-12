@@ -1,8 +1,118 @@
-libunicode-utf8-perl (0.62-deepin1) unstable; urgency=medium
+libunicode-utf8-perl (0.75-1) unstable; urgency=medium
 
-  * Rebuild
+  * Team upload.
+  * New upstream version 0.75.
 
- -- Deepin Packages Builder <packages@deepin.org>  Mon, 14 Nov 2022 17:46:46 +0800
+ -- Samuel Young <samyoung12788@gmail.com>  Wed, 15 Jul 2026 12:57:35 -0500
+
+libunicode-utf8-perl (0.72-1) unstable; urgency=medium
+
+  * Team upload.
+
+  [ Samuel Young ]
+  * New upstream version 0.72.
+
+  [ gregor herrmann ]
+  * Update build dependencies: Devel::AssertC99 → ExtUtils::CBuilder
+    a.k.a. libdevel-checkcompiler-perl → libextutils-cbuilder-perl.
+
+ -- Samuel Young <samyoung12788@gmail.com>  Tue, 07 Jul 2026 09:07:24 -0500
+
+libunicode-utf8-perl (0.71-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream version 0.71.
+  * Update upstream copyright.
+  * Declare compliance with Debian Policy 4.7.4.
+
+ -- Samuel Young <samyoung12788@gmail.com>  Sun, 05 Jul 2026 18:09:35 -0500
+
+libunicode-utf8-perl (0.70-2) unstable; urgency=medium
+
+  * Team upload.
+  * Remove <!nocheck> annotation from libdevel-checkcompiler-perl
+    dependency. (Closes: #1131959)
+
+ -- Samuel Young <samyoung12788@gmail.com>  Thu, 26 Mar 2026 10:54:11 -0500
+
+libunicode-utf8-perl (0.70-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream version 0.70.
+  * Update upstream copyright.
+
+ -- Samuel Young <samyoung12788@gmail.com>  Thu, 19 Mar 2026 12:12:23 -0500
+
+libunicode-utf8-perl (0.68-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream version 0.68.
+  * Update upstream copyright.
+  * Add build dependency to libdevel-checkcompiler-perl.
+
+ -- Samuel Young <samyoung12788@gmail.com>  Mon, 02 Mar 2026 11:24:06 -0600
+
+libunicode-utf8-perl (0.66-1) unstable; urgency=medium
+
+  * Team upload.
+  * Import upstream version 0.66.
+
+ -- gregor herrmann <gregoa@debian.org>  Wed, 25 Feb 2026 17:19:48 +0100
+
+libunicode-utf8-perl (0.65-1) unstable; urgency=medium
+
+  * Team upload.
+
+  [ Samuel Young ]
+  * New upstream version 0.65.
+
+  [ gregor herrmann ]
+  * Add copyright/license information for new files.
+
+ -- Samuel Young <samyoung12788@gmail.com>  Mon, 23 Feb 2026 17:38:51 -0600
+
+libunicode-utf8-perl (0.64-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream version 0.64.
+  * Declare compliance with Debian Policy 4.7.3.
+
+ -- Samuel Young <samyoung12788@gmail.com>  Mon, 23 Feb 2026 10:59:08 -0600
+
+libunicode-utf8-perl (0.63-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream version 0.63.
+  * Remove <<Priority: optional>>, which is the current default.
+  * Remove <<Rules-Requires-Root: no>>, which is the current default.
+
+ -- Samuel Young <samyoung12788@gmail.com>  Sat, 20 Dec 2025 18:05:40 -0600
+
+libunicode-utf8-perl (0.62-3) unstable; urgency=medium
+
+  * Team upload.
+  * Add build dependency on perl-xs-dev. (Closes: #1102811)
+  * Declare compliance with Debian Policy 4.7.2.
+  * Add hardening flags.
+
+ -- gregor herrmann <gregoa@debian.org>  Tue, 15 Apr 2025 18:29:49 +0200
+
+libunicode-utf8-perl (0.62-2) unstable; urgency=medium
+
+  [ Debian Janitor ]
+  * Bump debhelper dependency to >= 9, since that's what is used in
+    debian/compat.
+  * Bump debhelper from old 9 to 12.
+  * Set debhelper-compat version in Build-Depends.
+  * Set upstream metadata fields: Bug-Database, Bug-Submit, Repository,
+    Repository-Browse.
+  * Update standards version to 4.4.1, no changes needed.
+  * Update standards version to 4.5.0, no changes needed.
+  * Bump debhelper from old 12 to 13.
+  * Update standards version to 4.5.1, no changes needed.
+  * Update standards version to 4.6.1, no changes needed.
+
+ -- Jelmer Vernooĳ <jelmer@debian.org>  Sun, 04 Dec 2022 16:14:26 +0000
 
 libunicode-utf8-perl (0.62-1) unstable; urgency=medium
 

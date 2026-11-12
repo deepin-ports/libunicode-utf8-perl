@@ -1,23 +1,23 @@
 Source: libunicode-utf8-perl
 Section: perl
-Priority: optional
 Build-Depends:
- debhelper,
+ debhelper-compat (= 13),
+ libextutils-cbuilder-perl,
  libtaint-runtime-perl <!nocheck>,
  libtest-fatal-perl <!nocheck>,
  libtest-leaktrace-perl <!nocheck>,
  libtest-pod-perl <!nocheck>,
  libvariable-magic-perl <!nocheck>,
  perl,
+ perl-xs-dev,
 Maintainer: Debian Perl Group <pkg-perl-maintainers@lists.alioth.debian.org>
 Uploaders:
  Jonas Smedegaard <dr@jones.dk>,
-Standards-Version: 4.3.0
+Standards-Version: 4.7.4
 Vcs-Git: https://salsa.debian.org/perl-team/modules/packages/libunicode-utf8-perl.git
 Vcs-Browser: https://salsa.debian.org/perl-team/modules/packages/libunicode-utf8-perl
 Homepage: https://metacpan.org/release/Unicode-UTF8
 Testsuite: autopkgtest-pkg-perl
-Rules-Requires-Root: no
 
 Package: libunicode-utf8-perl
 Architecture: any

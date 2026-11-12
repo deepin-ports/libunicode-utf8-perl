@@ -1,3 +1,81 @@
+0.75 2026-07-14
+ - Fixed slurp_utf8() leaking the file descriptor if a fatal "utf8" warning
+   (e.g. warnings FATAL => 'utf8') was thrown while reading an ill-formed file.
+
+0.74 2026-07-13
+ - Fixed slurp_utf8() failing to link on Windows: PerlIO_openn is not
+   exported there. The file is now opened with the unbuffered PerlLIO
+   fd wrappers (open3/fstat/read/close) instead.
+
+0.73 2026-07-13
+ - Added slurp_utf8($filename) which reads an entire file and returns its
+   contents decoded from UTF-8 as a character string.
+ - Added support for older MSVC C compilers by using __inline in place of the 
+   C99 inline keyword on pre-Visual Studio 2015 builds.
+ - Fixed SSE2 detection to only enable the SIMD implementation on 64-bit x86
+   targets. This prevents unsupported SSE2 code from being selected on 32-bit 
+   x86 builds. Reported by Paul Howarth (@pghmcfc) issue #14.
+
+0.72 2026-07-07
+ - read_utf8() now takes a single-pass fast path on PerlIO fast-gets layers,
+   validating/copying/counting straight out of the layer buffer (up to ~11%
+   faster on multibyte-heavy input; see benchmarks/).
+ - Fixed read_utf8() on non-buffered handles stranding the trailing
+   incomplete sequence that was read to satisfy the requested length: the
+   pending bytes are now pushed back with PerlIO_unread() so the following
+   read sees them, matching decode_utf8() when drained to end of file.
+
+0.71 2026-07-05
+ - Added read_utf8($fh, $buf, $length[, $offset]) for reading validated  
+   UTF-8 code points from a file handle. Bytes are validated as they are  
+   read using a streaming DFA validator, so no PerlIO encoding layer is  
+   required on the handle. Ill-formed and truncated sequences are replaced  
+   with U+FFFD per the maximal subpart rule and warned in the "utf8"  
+   category. Tied file handles are not supported.
+ - Replaced the deprecated utf8n_to_uvuni() with utf8n_to_uvchr() thanks to
+   James E Keenan (@keenan), PR #13.
+
+0.70 2026-03-19
+ - Use utf8_check_ascii with a 16-byte ASCII fast path
+
+0.69 2026-03-19
+ - Update the c-utf8 library code: Improved GCC code generation, including with -O2, 
+   resulting in higher throughput.
+
+0.68 2026-03-02
+ - Include correct version of utf8_valid.h header.
+
+0.67 2026-03-02
+ - Fix SIMD feature gating for x86; avoid SSE2 intrinsics on non-SSE2 i686 builds
+ - Use Dist::Zilla for the distro (Thanks to Dan Book, @Grinnz++ for the migration)
+
+0.66 2026-02-25
+ - Rewrote the UTF-8 validator using a shift-based DFA from
+   https://github.com/chansen/c-utf8-valid by the same author.
+   Benchmarks show up to 10x faster decoding compared to Encode.pm,
+   see benchmarks/ in the repository for details.
+
+0.65 2026-02-23
+ - C99-compliant compiler is now required for Unicode::UTF8.
+ - Scan 16 bytes at a time to detect non-ASCII bytes, falling back to sequence 
+   validation for non-ASCII input. This approach resulted in a 900% throughput 
+   improvement on English text and a 200% improvement on Swedish text compared 
+   to Encode.pm. Benchmark in git repository.
+
+0.64 2026-02-23
+ - Unicode::UTF8 now allows noncharacters; they receive no special handling 
+   and are processed like any other code point.
+
+   According to Corrigendum #9, noncharacters (the values U+nFFFE and U+nFFFF 
+   (where n is from 0 to 10^16) and the values U+FDD0..U+FDEF) are permanently 
+   reserved but should be allowed in interchange.
+   <https://www.unicode.org/versions/corrigendum9.html>
+
+0.63 2025-12-21
+ - Remove the non-portable tests for Perl's "super" code points, testing 
+   values beyond 0x7FFF_FFFF isn’t necessary.
+ - Documentation typo corrections by @HuaChunbo
+
 0.62 2017-04-11
   - Only check for missing Module::Install related modules in Makefile.PL
 
